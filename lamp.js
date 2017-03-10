@@ -137,6 +137,32 @@ function m_mult(a, b) {
     return new THREE.Matrix4().multiplyMatrices(a, b);
 }
 
+
+function make_lamp() {
+    var material = new THREE.MeshPhongMaterial( { 
+           ambient: 0xCCCCCC, color: 0xff3333, specular: 0x008000, shininess: 40.0, shading: THREE.SmoothShading
+       });
+
+
+    // base [ -1, 0 | 1, 0 ]
+
+    var length = 2; // recalc based on endpoints?
+
+    
+
+
+
+
+
+    var lamp_base_g = new THREE.CylinderGeometry( 0.2, 2.0, 1.0, 32 );
+    var lamp_base_m = m_translate(0.0, 0.0, 0.0);
+
+    var lamp_base = new THREE.Mesh( lamp_base_g, material ); 
+    lamp_base.setMatrix(lamp_base_m);
+    scene.add(lamp_base);
+}
+
+/*
 function make_lamp() {
     var material = new THREE.MeshPhongMaterial( { 
            ambient: 0xCCCCCC, color: 0xff3333, specular: 0x008000, shininess: 40.0, shading: THREE.SmoothShading
@@ -196,6 +222,7 @@ function make_lamp() {
 
 
 }
+*/
 
 function generate_level(n, min_s, max_s, max_v, max_rv, cam_s) {
 
