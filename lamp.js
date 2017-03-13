@@ -138,28 +138,66 @@ function m_mult(a, b) {
 }
 
 
-function make_lamp() {
-    var material = new THREE.MeshPhongMaterial( { 
-           ambient: 0xCCCCCC, color: 0xff3333, specular: 0x008000, shininess: 40.0, shading: THREE.SmoothShading
-       });
+function make_box(x0, y0, x1, y1) {
+    // given two points, add a box to the scene
 
+
+    var box_dx = x1 - x0;
+    var box_dy = y1 - y0;
+
+    var box_length = Math.sqrt(box_dx * box_dx + box_dy * box_dy); 
+    var box_width = 0.2 * box_length; // TODO: arbitrary fixed width? or fixed ratio to length?
+
+    // midpoints
+    var box_x = 0.5 * (x0 + x1); 
+    var box_y = 0.5 * (y0 + y1);
+
+    // 2D rotation
+    var box_theta = Math.atan2(box_dy, box_dx);
+    //console.log(box_theta);
+
+    var box_g = new THREE.BoxGeometry( box_length, box_width, box_width); // set up dimensions of part
+    var box_m = m_mult(m_translate(box_x, box_y, 0.0), m_rotate("z", box_theta)); // set up position + rotation of part
+
+    var material = new THREE.MeshPhongMaterial( { 
+       ambient: 0xCCCCCC, color: 0xff3333, specular: 0x008000, shininess: 40.0, shading: THREE.SmoothShading
+   });
+
+    var box = new THREE.Mesh( box_g, material ); 
+    box.setMatrix(box_m);
+    scene.add(box); // load part
+}
+
+function make_lamp() {
+
+    // 2D lamp, 3 parts
 
     // base [ -1, 0 | 1, 0 ]
 
-    var length = 2; // recalc based on endpoints?
+    // have one array of size 4n (n is number of parts)
+    // iterate through array
 
-    
+    // each part has x0, y0, x1, y1
+
+    lamp_coords = [
+        -1, 0, 
+         1, 0,
+         0, 0, 
+         0, 2,
+         0, 2,
+         0, 4];
+
+    for (i = 0; i < lamp_coords.length; i = i + 4) {
+        x0 = lamp_coords[i];
+        y0 = lamp_coords[i+1];
+        x1 = lamp_coords[i+2];
+        y1 = lamp_coords[i+3];
+
+        make_box(x0, y0, x1, y1);
+    }
 
 
 
-
-
-    var lamp_base_g = new THREE.CylinderGeometry( 0.2, 2.0, 1.0, 32 );
-    var lamp_base_m = m_translate(0.0, 0.0, 0.0);
-
-    var lamp_base = new THREE.Mesh( lamp_base_g, material ); 
-    lamp_base.setMatrix(lamp_base_m);
-    scene.add(lamp_base);
 }
 
 /*
@@ -291,7 +329,7 @@ scene.add(balls);
 //////////////////////////// TIME TO DO FUN GAME THINGS /////////////////////////
 
 var camera_theta = 0.93;
-var camera_radius = 41;
+var camera_radius = 25;
 var mouse_x = 0;
 var mouse_y = 0;
 
